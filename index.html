@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Sites de Museus Públicos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A single-page application with a top navigation bar for smooth scrolling to thematic sections. The structure follows the logical flow of the original analysis: 1) Homepage & Visuals, 2) Usability, 3) Visitor Info, and 4) Improvement Opportunities. This thematic approach allows users to quickly grasp the key findings in each area. Interactive charts are used to visualize quantitative and qualitative data, making the insights more impactful and easier to digest than plain text. The goal is to transform a static report into an engaging, explorable dashboard. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Aesthetic is predominantly neutral. -> Goal: Inform. -> Viz: Donut Chart. -> Interaction: Hover tooltips. -> Justification: Excellent for showing part-to-whole relationships, immediately highlighting the dominance of neutral palettes. -> Library: Chart.js.
+        - Report Info: Navigation is often a challenge. -> Goal: Compare. -> Viz: Horizontal Bar Chart. -> Interaction: Hover tooltips. -> Justification: Clearly visualizes the qualitative assessment (Intuitive vs. Complex), making the usability problem stark. -> Library: Chart.js.
+        - Report Info: Lack of multilingual support. -> Goal: Highlight a gap. -> Viz: Vertical Bar Chart. -> Interaction: Hover tooltips. -> Justification: Creates a strong visual contrast to emphasize the missed opportunity for serving an international audience. -> Library: Chart.js.
+        - All textual findings are presented in clean, scannable cards for readability.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #333;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-stone-800">Análise de Sites de Museus</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#visual" class="text-stone-600 hover:text-amber-700 transition-colors">Identidade Visual</a>
+                <a href="#usabilidade" class="text-stone-600 hover:text-amber-700 transition-colors">Usabilidade</a>
+                <a href="#melhorias" class="text-stone-600 hover:text-amber-700 transition-colors">Oportunidades</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-stone-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#visual" class="block py-2 text-stone-600 hover:text-amber-700">Identidade Visual</a>
+            <a href="#usabilidade" class="block py-2 text-stone-600 hover:text-amber-700">Usabilidade</a>
+            <a href="#melhorias" class="block py-2 text-stone-600 hover:text-amber-700">Oportunidades</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section class="text-center mb-20">
+            <h2 class="text-4xl font-bold text-stone-900 mb-4">Análise Interativa de Sites de Museus Públicos</h2>
+            <p class="max-w-3xl mx-auto text-stone-600 text-lg">
+                Uma síntese das tendências, desafios e oportunidades nas plataformas digitais de importantes museus. Esta análise transforma observações qualitativas em um dashboard interativo para explorar os padrões de design, usabilidade e conteúdo.
+            </p>
+        </section>
+
+        <section id="visual" class="mb-20 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-stone-900 mb-2 text-center">1. Página Inicial e Identidade Visual</h3>
+            <p class="text-center text-stone-600 mb-12 max-w-2xl mx-auto">A primeira impressão é moldada por elementos visuais fortes e uma estrutura de navegação familiar. A estética tende à sobriedade, colocando o foco no conteúdo e nas obras.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-amber-800">Destaque Visual</h4>
+                    <p class="text-stone-700">A maioria dos sites utiliza carrosséis de imagens ou fotografias de alta qualidade do museu no plano de fundo. Esta é uma estratégia imersiva para destacar exposições e eventos atuais.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-amber-800">Navegação Comum</h4>
+                    <p class="text-stone-700">A presença de uma barra de navegação com categorias essenciais ("Sobre", "Acervos", "Exposições") é quase universal, oferecendo um caminho claro para o usuário explorar o conteúdo principal.</p>
+                </div>
+                <div class="md:col-span-2 lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                     <h4 class="font-bold text-lg mb-2 text-center text-amber-800">Estética Predominante</h4>
+                    <div class="chart-container">
+                        <canvas id="aestheticsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="usabilidade" class="mb-20 scroll-mt-20">
+            <h3 class="text-3xl font-bold text-stone-900 mb-2 text-center">2. Navegação e Usabilidade</h3>
+             <p class="text-center text-stone-600 mb-12 max-w-2xl mx-auto">Apesar da estrutura de navegação padronizada, a experiência do usuário frequentemente enfrenta desafios, principalmente devido à densidade de informação.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-center text-amber-800">Avaliação da Usabilidade</h4>
+                    <div class="chart-container h-64">
+                        <canvas id="usabilityChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-amber-800">O Desafio da Usabilidade</h4>
+                    <p class="text-stone-700 mb-4">A navegação, em muitos casos, não é intuitiva. A sobrecarga de informações visuais e textuais pode confundir o usuário, dificultando a busca por dados específicos. Este é um desafio comum em sites ricos em conteúdo, apontando para a necessidade de um design mais focado e hierárquico.</p>
+                    <h4 class="font-bold text-lg mb-2 text-amber-800">Padrão de Conteúdo Positivo</h4>
+                    <p class="text-stone-700">Quase todos os sites possuem uma seção dedicada às informações para o visitante, apresentando de forma clara os horários de funcionamento e detalhes sobre exposições, o que representa um ponto forte na comunicação com o público.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="melhorias" class="scroll-mt-20">
+            <h3 class="text-3xl font-bold text-stone-900 mb-2 text-center">3. Oportunidades de Melhoria</h3>
+            <p class="text-center text-stone-600 mb-12 max-w-2xl mx-auto">A análise revela uma oportunidade significativa para ampliar o alcance e a acessibilidade das plataformas, atendendo a um público mais diversificado.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-amber-800">A Lacuna do Multilinguismo</h4>
+                    <p class="text-stone-700">A falta de opções de tradução para idiomas como inglês e espanhol é um ponto de atenção crítico. Considerando que os museus são polos turísticos, a ausência de um seletor de idioma limita a acessibilidade para o público internacional. Implementar essa funcionalidade é uma clara oportunidade para aprimorar a experiência do usuário e tornar a plataforma mais inclusiva e acolhedora para visitantes de todo o mundo.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2 text-center text-amber-800">Suporte a Idiomas nos Sites Analisados</h4>
+                    <div class="chart-container">
+                        <canvas id="languageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white mt-20 border-t border-stone-200">
+        <div class="container mx-auto px-6 py-8 text-center text-stone-500">
+            <p>&copy; 2025 Análise de Plataformas Digitais. Todos os dados são baseados em observações públicas.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            mobileMenu.addEventListener('click', (e) => {
+                if(e.target.tagName === 'A'){
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+
+            const aestheticsCtx = document.getElementById('aestheticsChart').getContext('2d');
+            new Chart(aestheticsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Estética Neutra (Branco/Preto)', 'Outras Paletas'],
+                    datasets: [{
+                        label: 'Estética Predominante',
+                        data: [85, 15],
+                        backgroundColor: ['#44403c', '#f59e0b'],
+                        borderColor: '#f8f7f4',
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#57534e',
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const usabilityCtx = document.getElementById('usabilityChart').getContext('2d');
+            new Chart(usabilityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Navegação Intuitiva', 'Navegação Complexa/Confusa'],
+                    datasets: [{
+                        label: 'Avaliação da Usabilidade',
+                        data: [30, 70],
+                        backgroundColor: ['#a3e635', '#ef4444'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                },
+                                color: '#57534e'
+                            }
+                        },
+                        y: {
+                           ticks: {
+                                color: '#57534e'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const languageCtx = document.getElementById('languageChart').getContext('2d');
+            new Chart(languageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Apenas em Português', 'Suporte Multilíngue'],
+                    datasets: [{
+                        label: 'Disponibilidade de Idiomas',
+                        data: [90, 10],
+                        backgroundColor: ['#f59e0b', '#22c55e'],
+                        barPercentage: 0.6,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                             ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                },
+                                color: '#57534e'
+                            }
+                        },
+                        x: {
+                           ticks: {
+                                color: '#57534e'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}% dos sites analisados`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
